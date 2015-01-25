@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+     android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/blur">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hour:" />
+
+	<EditText
+        android:id="@+id/etHour"
+        android:textColor="#003CD9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Hour"
+        android:inputType="numberDecimal" />
+	
+	<TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Minute:" />
+    
+    <EditText
+        android:id="@+id/etMinute"
+        android:textColor="#D95300"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Minute"
+        android:inputType="numberDecimal" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Number of Alarms:" />
+    
+    <EditText
+        android:id="@+id/etNumber"
+        android:textColor="#0085D9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Number"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/bSet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set" />
+    
+    <Button
+        android:id="@+id/bStopPresent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop Present Alarm" />
+
+    <Button
+        android:id="@+id/bStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop" />
+
+</LinearLayout>
