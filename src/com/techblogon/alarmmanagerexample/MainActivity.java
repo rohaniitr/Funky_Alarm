@@ -80,8 +80,8 @@ public class MainActivity extends Activity implements OnClickListener
 //	   toStop = null;
 	  }
 
-	  public void onServiceConnected(ComponentName name, IBinder service) {
-	   Toast.makeText(MainActivity.this, "Service is connected", Toast.LENGTH_SHORT).show();
+	  public void onServiceConnected(ComponentName name, IBinder service) 
+	  {
 	   mBounded = true;
 	   LocalBinder mLocalBinder = (LocalBinder)service;
 	   toStop = mLocalBinder.getServerInstance();
@@ -128,7 +128,7 @@ public class MainActivity extends Activity implements OnClickListener
 				}
 				catch(NumberFormatException e)
 				{
-					Toast.makeText(this, "Beta! Tumse na ho paege", Toast.LENGTH_LONG).show();
+					Toast.makeText(this, "Fill- How many alarms you want to set", Toast.LENGTH_LONG).show();
 				}
 				
 				break;
@@ -142,7 +142,7 @@ public class MainActivity extends Activity implements OnClickListener
 				}
 				else
 				{
-					Toast.makeText(this, "Alarm to laga lo mamu \nBand baad me kar lena",  Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "Alarm not set",  Toast.LENGTH_SHORT).show();
 				}
 				
 				break;

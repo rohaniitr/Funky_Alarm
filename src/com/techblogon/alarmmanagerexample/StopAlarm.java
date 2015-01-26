@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.techblogon.alarmmanagerexample.AlarmService_r.LocalBinder;
 
@@ -169,14 +168,14 @@ public class StopAlarm extends Activity implements OnClickListener
 	//Bindt Activity to Service
 	ServiceConnection mConnection = new ServiceConnection() {
 
-		  public void onServiceDisconnected(ComponentName name) {
-//		   Toast.makeText(MainActivity.this, "Service is disconnected", Toast.LENGTH_SHORT).show();
+		  public void onServiceDisconnected(ComponentName name) 
+		  {
 //		   mBounded = false;
 //		   toStop = null;
 		  }
 
-		  public void onServiceConnected(ComponentName name, IBinder service) {
-		   Toast.makeText(StopAlarm.this, "Stop Alarm Service is connected", Toast.LENGTH_SHORT).show();
+		  public void onServiceConnected(ComponentName name, IBinder service) 
+		  {
 		   mBounded = true;
 		   LocalBinder mLocalBinder = (LocalBinder)service;
 		   instance = mLocalBinder.getServerInstance();

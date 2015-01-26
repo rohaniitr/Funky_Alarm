@@ -90,7 +90,7 @@ public class AlarmService_r extends Service
 		isItRunning=false;
 		//It may cause an error
 //		unregisterReceiver(mReceiver);
-		Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show();
 	}
 	
 	//Stops the functions on pressing Stop Button
@@ -154,7 +154,6 @@ public class AlarmService_r extends Service
 			//Set the alarm at particular time, Hours & Minutes
 	        Calendar calendar = Calendar.getInstance();
 	        calendar.setTimeInMillis(System.currentTimeMillis());
-	        //Toast.makeText(this, sHour + " , " + sMinute, Toast.LENGTH_SHORT).show();
 	        if (sHour==59 && sMinute==59)
 	        	crook=true;
 	        else
