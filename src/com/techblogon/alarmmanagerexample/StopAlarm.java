@@ -29,7 +29,7 @@ import com.techblogon.alarmmanagerexample.AlarmService_r.LocalBinder;
 public class StopAlarm extends Activity implements OnClickListener
 {
 	Button stopAlarm;
-	boolean mBounded;
+	boolean mBounded, close;
 	AlarmService_r instance;
 	MediaPlayer stPlayer;
 	WakeLock wakeLock;
@@ -43,6 +43,30 @@ public class StopAlarm extends Activity implements OnClickListener
 		setContentView(R.layout.stop_alarm);
 		stopAlarm= (Button)findViewById(R.id.bStopAlarm);
 		stopAlarm.setOnClickListener(this);
+		
+		on();
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		off();
+		close=false;
+		finish();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		if (close)
+			off();
+	}
+	
+	//Starts all the bull
+	void on()
+	{
+		close=true;
 
 		//Wake up the device
 		wakeDevice();
@@ -53,13 +77,6 @@ public class StopAlarm extends Activity implements OnClickListener
 		
 		//Plays the music
 		playSound(this, getAlarmUri());
-	}
-
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		off();
-		finish();
 	}
 	
 	// Called whenever we need to wake up the device
@@ -73,13 +90,6 @@ public class StopAlarm extends Activity implements OnClickListener
         KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 	    keyguardLock = keyguardManager.newKeyguardLock("TAG");
 	    keyguardLock.disableKeyguard();
-	}
-
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		off();
 	}
 	
 	//Shut downs all the bull
