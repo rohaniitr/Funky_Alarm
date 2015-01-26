@@ -43,7 +43,8 @@ public class StopAlarm extends Activity implements OnClickListener
 		setContentView(R.layout.stop_alarm);
 		stopAlarm= (Button)findViewById(R.id.bStopAlarm);
 		stopAlarm.setOnClickListener(this);
-		createWakeLocks();
+
+		//Wake up the device
 		wakeDevice();
 		
 		//Vibrate the mobile phone
@@ -60,27 +61,26 @@ public class StopAlarm extends Activity implements OnClickListener
 		Toast.makeText(this, "Ouch !", Toast.LENGTH_SHORT).show();
 		stPlayer.stop();
 		vibrator.cancel();
-		wakeLock.release();
+		//Puts the KeyLock ON again
 		keyguardLock.reenableKeyguard();
+		//Switches light OFF
+		wakeLock.release();
 		finish();
-	}
-	
-	protected void createWakeLocks()
-	{
-		PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP), "TAG");
-        wakeLock.acquire();
 	}
 	
 	// Called whenever we need to wake up the device
 	public void wakeDevice() 
 	{
-	    wakeLock.acquire();
-	    KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+		//Switches light ON
+		PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP), "TAG");
+        wakeLock.acquire();
+        //Opens KeyLock
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 	    keyguardLock = keyguardManager.newKeyguardLock("TAG");
 	    keyguardLock.disableKeyguard();
 	}
-	
+
 	//Plays the Alarm tone on the Alarm Trigger
 	public void playSound(Context context, Uri alert)
 	{
