@@ -1,7 +1,5 @@
 package com.techblogon.alarmmanagerexample;
 
-import com.techblogon.alarmmanagerexample.AlarmService_r.LocalBinder;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -16,12 +14,16 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.techblogon.alarmmanagerexample.AlarmService_r.LocalBinder;
 
 public class MainActivity extends Activity implements OnClickListener
 {
-	Button stop, set, stopPresent;
-	EditText hour, minute, number;
+	Button stop, set;
+	EditText number;
+	TimePicker timePicker;
 	//To access the function of the service, e.i., AlarmService_r
 	AlarmService_r toStop;
 	//To check if Service is connected to activity or not
@@ -33,13 +35,10 @@ public class MainActivity extends Activity implements OnClickListener
 		setContentView(R.layout.activity_main);
 		stop=(Button)findViewById(R.id.bStop);
 		set=(Button)findViewById(R.id.bSet);
-		stopPresent=(Button)findViewById(R.id.bStopPresent);
-		hour=(EditText)findViewById(R.id.etHour);
-		minute=(EditText)findViewById(R.id.etMinute);
+		timePicker=(TimePicker)findViewById(R.id.tpAlarm);
 		number=(EditText)findViewById(R.id.etNumber);
 		stop.setOnClickListener(this);
 		set.setOnClickListener(this);
-		stopPresent.setOnClickListener(this);
 	}
 	
 	
@@ -117,14 +116,12 @@ public class MainActivity extends Activity implements OnClickListener
 				{
 					hideKeyboard();
 					//try catch will work after putting this only, e.i.,parseInt
-					int i = Integer.parseInt(hour.getText().toString());
-					i = Integer.parseInt(minute.getText().toString());
-					i = Integer.parseInt(number.getText().toString());
+					int i = Integer.parseInt(number.getText().toString());
 					//Create Intent and send the info through Bundles
 					Intent sService = new Intent(getBaseContext(), AlarmService_r.class);
 					//Bind the data you want to send to the service
-					sService.putExtra("keyHour", hour.getText().toString());
-					sService.putExtra("keyMinute", minute.getText().toString());
+					sService.putExtra("keyHour", timePicker.getCurrentHour().toString());
+					sService.putExtra("keyMinute", timePicker.getCurrentMinute().toString());
 					sService.putExtra("keyNumber", number.getText().toString());
 					//Start the service
 					startService(sService);
@@ -132,21 +129,6 @@ public class MainActivity extends Activity implements OnClickListener
 				catch(NumberFormatException e)
 				{
 					Toast.makeText(this, "Beta! Tumse na ho paege", Toast.LENGTH_LONG).show();
-				}
-				
-				break;
-			case R.id.bStopPresent:
-//				if (isMyServiceRunning(AlarmService_r.class))
-				if(toStop.isItRunning)
-				{
-//					Intent mIntent = new Intent(this, AlarmService_r.class);
-//				    bindService(mIntent, mConnection, BIND_AUTO_CREATE);
-					toStop.stop();
-//					unbindService(mConnection);
-				}
-				else
-				{
-					Toast.makeText(this, "Alarm not set", Toast.LENGTH_SHORT).show();
 				}
 				
 				break;

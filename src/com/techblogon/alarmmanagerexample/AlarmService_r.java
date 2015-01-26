@@ -26,18 +26,20 @@ public class AlarmService_r extends Service
 	MediaPlayer player;
 	Vibrator vibrator;
 	int sHour, sMinute, sNumber;
+	//For the number of Alarms
 	int rohan;
 	PowerManager.WakeLock wakeLock;
 	//To check when Stop button pressed & perform action accordingly
 	long track;
+	//Gives status of Alarm
 	public boolean isItRunning;
-
 	//Used for register Alarm Manager
 	PendingIntent pendingIntent;
 	//Used to store running AlarmManager instance
 	AlarmManager alarmManager;
 	//Callback function for AlarmManager event
 	BroadcastReceiver mReceiver;
+	//For StopAlarm Activity
 	Intent intentone;
 	
 	IBinder mBinder = new LocalBinder();
@@ -69,11 +71,6 @@ public class AlarmService_r extends Service
 	public int onStartCommand(Intent intent, int flags, int startId) 
 	{
 		rohan=0;
-		if (player.isPlaying())
-		{
-//			Toast.makeText(this, "isPlaying", Toast.LENGTH_SHORT).show();
-			player.stop();
-		}
 		
 		String s = intent.getStringExtra("keyHour");
 		sHour = Integer.parseInt(s);
@@ -82,7 +79,6 @@ public class AlarmService_r extends Service
 		s = intent.getStringExtra("keyNumber");
 		sNumber = Integer.parseInt(s);
 		setAlarm();
-//		isItRunning=true;
 		return START_STICKY;
 	}
 
@@ -90,11 +86,10 @@ public class AlarmService_r extends Service
 	public void onDestroy() 
 	{
 		super.onDestroy();
-		stop();
 		UnregisterAlarmBroadcast();
 		isItRunning=false;
 		//It may cause an error
-		//unregisterReceiver(mReceiver);
+//		unregisterReceiver(mReceiver);
 		Toast.makeText(this, "Service Stopped", Toast.LENGTH_SHORT).show();
 	}
 	
@@ -103,8 +98,7 @@ public class AlarmService_r extends Service
 	{
 		if (track <= System.currentTimeMillis())
 		{
-//			player.stop();
-			vibrator.cancel();
+			
 		}
 		else
 		{
@@ -119,24 +113,13 @@ public class AlarmService_r extends Service
 	{
 		  Log.i("Alarm Example:RegisterAlarmBroadcast()", "Going to register Intent.RegisterAlramBroadcast");
 		
-		//This is the call back function(BroadcastReceiver) which will be call when your 
-		//alarm time will reached.
+		//This is the call back function(BroadcastReceiver) which will be call when your alarm time will reached.
 		mReceiver = new BroadcastReceiver()
 		{
 		    @Override
 		    public void onReceive(Context context, Intent intent)
 		    {	
-	    		//Displays the Toast
-//				Toast.makeText(context, "Time is up!!!!.",Toast.LENGTH_LONG).show();
-				
-				//Vibrate the mobile phone
-				vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-				vibrator.vibrate(2000);
-				
-				//Play the alarm tone
-//				playSound(context, getAlarmUri());
-				
-				rohan+=1;
+		    	rohan+=1;
 				if (rohan>=sNumber)
 				{
 					UnregisterAlarmBroadcast();
@@ -159,14 +142,14 @@ public class AlarmService_r extends Service
 	//Unregisters the Registered AlarmService Request
 	public void UnregisterAlarmBroadcast()
 	{
-		alarmManager.cancel(pendingIntent); 
-//		isItRunning=false;
+		alarmManager.cancel(pendingIntent);
 //		getBaseContext().unregisterReceiver(mReceiver);
     }
 	
 	//Actually sets the Alarm
 		private void setAlarm()
 		{
+			//Tells the service True or Fake
 			boolean crook;
 			//Set the alarm at particular time, Hours & Minutes
 	        Calendar calendar = Calendar.getInstance();
@@ -187,16 +170,15 @@ public class AlarmService_r extends Service
 	        	sMinute+=60;
 	        //Set the alarm
 	        track = System.currentTimeMillis() + (sHour*60*60*1000) + (sMinute*60*1000);
-			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (sHour*60*60*1000) + (sMinute*60*1000) , (10*1000)  , pendingIntent);
+			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (sHour*60*60*1000) + (sMinute*60*1000) , (60*1000)  , pendingIntent);
 			isItRunning=true;
 			if (!crook)
-				Toast.makeText(this, "Alarm set after " + sHour + " hour  & " + sMinute + " minute", Toast.LENGTH_SHORT).show();
+				if (sMinute!=0)
+					Toast.makeText(this, "The alarm is set for " + sHour + " hours and " + sMinute + " minutes from now", Toast.LENGTH_SHORT).show();
+				else
+					Toast.makeText(this, "The alarm is set for " + sHour + " hours from now", Toast.LENGTH_SHORT).show();
 		}
 		
-//		public void play()
-//		{
-//			playSound(getApplicationContext(), getAlarmUri());
-//		}
 		
 		//Plays the Alarm tone on the Alarm Trigger
 		public void playSound(Context context, Uri alert)
@@ -221,7 +203,7 @@ public class AlarmService_r extends Service
 				public void run(){
 					try
 					{
-						sleep(10000);					
+						sleep(60000);					
 					} 
 					catch (InterruptedException e)
 					{
@@ -229,7 +211,6 @@ public class AlarmService_r extends Service
 					}
 					finally
 					{
-//						wakeLock.release();
 						player.stop();
 					}
 				}
@@ -237,7 +218,6 @@ public class AlarmService_r extends Service
 			timer.start();
 		}
 		
-		//this
 		//Gets the Alarm tone
 		private Uri getAlarmUri()
 		{
@@ -253,35 +233,4 @@ public class AlarmService_r extends Service
 			return alert;
 		}
 	
-		//Wake up the device if the screen is lock	
-		public void wakeDevice() 
-		{
-//		    PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-//		    wakeLock = powerManager.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP), "TAG");
-//		    wakeLock.acquire();
-	//
-//		    KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-//		    KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("TAG");
-//		    keyguardLock.disableKeyguard();
-//		    runOnUiThread(new Runnable(){
-//		        public void run(){
-//		            getWindow().addFlags(
-//		                      WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-//		                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-//		                    | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-//		                    | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);                
-//		        }
-//		    });
-//		}
-	//	
-//		private Boolean editTextCheck() 
-//		{
-//			if(fHour.getText().toString().trim().length() == 0 || fMinute.getText().toString().trim().length() == 0)
-//			{
-//				return false;
-//			}
-//			return true;
-//		}
-		}
-//
 }

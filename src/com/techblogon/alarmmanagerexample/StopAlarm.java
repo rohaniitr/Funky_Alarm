@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +34,7 @@ public class StopAlarm extends Activity implements OnClickListener
 	MediaPlayer stPlayer;
 	WakeLock wakeLock;
 	KeyguardLock keyguardLock;
+	Vibrator vibrator;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +43,14 @@ public class StopAlarm extends Activity implements OnClickListener
 		setContentView(R.layout.stop_alarm);
 		stopAlarm= (Button)findViewById(R.id.bStopAlarm);
 		stopAlarm.setOnClickListener(this);
-//		wakeDevice();
 		createWakeLocks();
 		wakeDevice();
+		
+		//Vibrate the mobile phone
+		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		vibrator.vibrate(2000);
+		
+		//Plays the music
 		playSound(this, getAlarmUri());
 	}
 
@@ -52,83 +59,83 @@ public class StopAlarm extends Activity implements OnClickListener
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "Ouch !", Toast.LENGTH_SHORT).show();
 		stPlayer.stop();
+		vibrator.cancel();
 		wakeLock.release();
 		keyguardLock.reenableKeyguard();
 		finish();
 	}
 	
-	protected void createWakeLocks(){
-//	    PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-//	    wakeLock = powerManager.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP), "Loneworker - FULL WAKE LOCK");
-//	    partialWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Loneworker - PARTIAL WAKE LOCK");
+	protected void createWakeLocks()
+	{
 		PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP), "TAG");
         wakeLock.acquire();
 	}
+	
 	// Called whenever we need to wake up the device
-	public void wakeDevice() {
+	public void wakeDevice() 
+	{
 	    wakeLock.acquire();
-
 	    KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 	    keyguardLock = keyguardManager.newKeyguardLock("TAG");
 	    keyguardLock.disableKeyguard();
 	}
 	
 	//Plays the Alarm tone on the Alarm Trigger
-			public void playSound(Context context, Uri alert)
+	public void playSound(Context context, Uri alert)
+	{
+		stPlayer = new MediaPlayer();
+		try
+		{
+			stPlayer.setDataSource(context, alert);
+			final AudioManager audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+			if(audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0)
 			{
-				stPlayer = new MediaPlayer();
+				stPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+				stPlayer.prepare();
+				stPlayer.start();
+			}
+		}		
+		catch(IOException e)
+		{
+			Log.i("Alarm Receiver", "No audio Bitch Found");
+		}
+		Thread timer = new Thread(){
+			public void run(){
 				try
 				{
-					stPlayer.setDataSource(context, alert);
-					final AudioManager audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-					if(audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0)
-					{
-						stPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-						stPlayer.prepare();
-						stPlayer.start();
-					}
-				}		
-				catch(IOException e)
+					sleep(10000);					
+				} 
+				catch (InterruptedException e)
 				{
-					Log.i("Alarm Receiver", "No audio Bitch Found");
+					e.printStackTrace();
 				}
-				Thread timer = new Thread(){
-					public void run(){
-						try
-						{
-							sleep(10000);					
-						} 
-						catch (InterruptedException e)
-						{
-							e.printStackTrace();
-						}
-						finally
-						{
+				finally
+				{
 //							wakeLock.release();
-							stPlayer.stop();
-						}
-					}
-				};
-				timer.start();
-			}
-			
-			//this
-			//Gets the Alarm tone
-			private Uri getAlarmUri()
-			{
-				Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-				if (alert==null)
-				{
-					alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-					if (alert==null)
-					{
-						alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-					}
+					stPlayer.stop();
 				}
-				return alert;
 			}
+		};
+		timer.start();
+	}
+			
+	//Gets the Alarm tone
+	private Uri getAlarmUri()
+	{
+		Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+		if (alert==null)
+		{
+			alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+			if (alert==null)
+			{
+				alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+			}
+		}
+		return alert;
+	}
 	
+	//Here we actually Bind Activity to Service
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
@@ -137,6 +144,7 @@ public class StopAlarm extends Activity implements OnClickListener
 	    bindService(mIntent, mConnection, BIND_AUTO_CREATE);
 	}
 
+	//Bindt Activity to Service
 	ServiceConnection mConnection = new ServiceConnection() {
 
 		  public void onServiceDisconnected(ComponentName name) {
