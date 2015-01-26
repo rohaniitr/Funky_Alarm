@@ -26,7 +26,6 @@ public class MainActivity extends Activity implements OnClickListener
 	AlarmService_r toStop;
 	//To check if Service is connected to activity or not
 	boolean mBounded;
-	//test
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
