@@ -58,13 +58,7 @@ public class StopAlarm extends Activity implements OnClickListener
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		Toast.makeText(this, "Ouch !", Toast.LENGTH_SHORT).show();
-		stPlayer.stop();
-		vibrator.cancel();
-		//Puts the KeyLock ON again
-		keyguardLock.reenableKeyguard();
-		//Switches light OFF
-		wakeLock.release();
+		off();
 		finish();
 	}
 	
@@ -79,6 +73,24 @@ public class StopAlarm extends Activity implements OnClickListener
         KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 	    keyguardLock = keyguardManager.newKeyguardLock("TAG");
 	    keyguardLock.disableKeyguard();
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		off();
+	}
+	
+	//Shut downs all the bull
+	void off()
+	{
+		stPlayer.stop();
+		vibrator.cancel();
+		//Puts the KeyLock ON again
+		keyguardLock.reenableKeyguard();
+		//Switches light OFF
+		wakeLock.release();
 	}
 
 	//Plays the Alarm tone on the Alarm Trigger
