@@ -38,6 +38,7 @@ public class AlarmService_r extends Service
 	AlarmManager alarmManager;
 	//Callback function for AlarmManager event
 	BroadcastReceiver mReceiver;
+	Intent intentone;
 	
 	IBinder mBinder = new LocalBinder();
 	
@@ -70,7 +71,7 @@ public class AlarmService_r extends Service
 		rohan=0;
 		if (player.isPlaying())
 		{
-			Toast.makeText(this, "isPlaying", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "isPlaying", Toast.LENGTH_SHORT).show();
 			player.stop();
 		}
 		
@@ -102,7 +103,7 @@ public class AlarmService_r extends Service
 	{
 		if (track <= System.currentTimeMillis())
 		{
-			player.stop();
+//			player.stop();
 			vibrator.cancel();
 		}
 		else
@@ -126,30 +127,24 @@ public class AlarmService_r extends Service
 		    public void onReceive(Context context, Intent intent)
 		    {	
 	    		//Displays the Toast
-				Toast.makeText(context, "Time is up!!!!.",Toast.LENGTH_LONG).show();
+//				Toast.makeText(context, "Time is up!!!!.",Toast.LENGTH_LONG).show();
 				
 				//Vibrate the mobile phone
 				vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 				vibrator.vibrate(2000);
 				
 				//Play the alarm tone
-				playSound(context, getAlarmUri());
+//				playSound(context, getAlarmUri());
 				
 				rohan+=1;
 				if (rohan>=sNumber)
 				{
 					UnregisterAlarmBroadcast();
 		    		Toast.makeText(context, "Repeat Alarm Cancelled", Toast.LENGTH_SHORT).show();
-//		    		isItRunning=false;
 				}	
 				
 				//start activity
-//		        Intent i = new Intent();
-//		        i.setClassName("com.techblogon.alarmmanagerexample", "com.techblogon.alarmmanagerexample.StopAlarm");
-//		        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//		        context.startActivity(i);
-				
-				Intent intentone = new Intent(context.getApplicationContext(), MainActivity.class);
+				intentone = new Intent(context.getApplicationContext(), StopAlarm.class);
 				intentone.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 				context.startActivity(intentone);
 		    }
@@ -197,6 +192,11 @@ public class AlarmService_r extends Service
 			if (!crook)
 				Toast.makeText(this, "Alarm set after " + sHour + " hour  & " + sMinute + " minute", Toast.LENGTH_SHORT).show();
 		}
+		
+//		public void play()
+//		{
+//			playSound(getApplicationContext(), getAlarmUri());
+//		}
 		
 		//Plays the Alarm tone on the Alarm Trigger
 		public void playSound(Context context, Uri alert)
@@ -253,7 +253,6 @@ public class AlarmService_r extends Service
 			return alert;
 		}
 	
-		//this
 		//Wake up the device if the screen is lock	
 		public void wakeDevice() 
 		{
