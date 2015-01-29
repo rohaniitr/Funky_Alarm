@@ -36,6 +36,7 @@ public class MainActivity extends Activity implements OnClickListener
 		stop=(Button)findViewById(R.id.bStop);
 		set=(Button)findViewById(R.id.bSet);
 		timePicker=(TimePicker)findViewById(R.id.tpAlarm);
+		timePicker.setIs24HourView(true);
 		number=(EditText)findViewById(R.id.etNumber);
 		duration=(EditText)findViewById(R.id.etDuration);
 		stop.setOnClickListener(this);

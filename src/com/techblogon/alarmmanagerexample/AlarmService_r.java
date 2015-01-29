@@ -10,14 +10,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -155,22 +150,23 @@ public class AlarmService_r extends Service
 	        	crook=true;
 	        else
 	        	crook=false;
-	        hour-=calendar.get(Calendar.HOUR);
-	        minute-=calendar.get(Calendar.MINUTE);
-	        
-	        if (hour<0)
-	        	hour+=12;
-	        if (hour>=12)
-	        	hour-=12;
-	        if(minute<0)
-	        	minute+=60;
+	        //in minutes here
+	        int present = (calendar.get(Calendar.HOUR_OF_DAY)*60) + calendar.get(Calendar.MINUTE);
+	        int alarmTime = (hour*60) + minute;
 	        //Set the alarm
-	        track = System.currentTimeMillis() + (hour*60*60*1000) + (minute*60*1000);
-			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (hour*60*60*1000) + (minute*60*1000) , (duration*60*1000)  , pendingIntent);
+	        track = alarmTime*60*1000;
+	        alarmTime -= present;
+	        //For next day
+	        if(alarmTime<0)
+	        	alarmTime+=(24*60);
+	        
+			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (alarmTime*60*1000) , (duration*60*1000)  , pendingIntent);
 			isItRunning=true;
+			minute=alarmTime%60;
+			hour=alarmTime/60;
 			if (!crook)
 				if (minute!=0)
-					Toast.makeText(this, "The alarm is set for " + hour + " hours and " + minute + " minutes from now", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "The alarm is set for " + (hour) + " hours and " + minute + " minutes from now", Toast.LENGTH_SHORT).show();
 				else
 					Toast.makeText(this, "The alarm is set for " + hour + " hours from now", Toast.LENGTH_SHORT).show();
 		}
