@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 public class AlarmService_r extends Service 
 {
-	int hour, minute, number;
+	int hour, minute, number, duration;
 	//For the number of Alarms
 	int rohan;
 	PowerManager.WakeLock wakeLock;
@@ -74,6 +74,8 @@ public class AlarmService_r extends Service
 		minute = Integer.parseInt(s);
 		s = intent.getStringExtra("keyNumber");
 		number = Integer.parseInt(s);
+		s = intent.getStringExtra("keyDuration");
+		duration = Integer.parseInt(s);
 		setAlarm();
 		return START_STICKY;
 	}
@@ -164,7 +166,7 @@ public class AlarmService_r extends Service
 	        	minute+=60;
 	        //Set the alarm
 	        track = System.currentTimeMillis() + (hour*60*60*1000) + (minute*60*1000);
-			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (hour*60*60*1000) + (minute*60*1000) , (60*1000)  , pendingIntent);
+			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (hour*60*60*1000) + (minute*60*1000) , (duration*60*1000)  , pendingIntent);
 			isItRunning=true;
 			if (!crook)
 				if (minute!=0)

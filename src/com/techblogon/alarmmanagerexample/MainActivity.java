@@ -22,7 +22,7 @@ import com.techblogon.alarmmanagerexample.AlarmService_r.LocalBinder;
 public class MainActivity extends Activity implements OnClickListener
 {
 	Button stop, set;
-	EditText number;
+	EditText number, duration;
 	TimePicker timePicker;
 	//To access the function of the service, e.i., AlarmService_r
 	AlarmService_r toStop;
@@ -37,6 +37,7 @@ public class MainActivity extends Activity implements OnClickListener
 		set=(Button)findViewById(R.id.bSet);
 		timePicker=(TimePicker)findViewById(R.id.tpAlarm);
 		number=(EditText)findViewById(R.id.etNumber);
+		duration=(EditText)findViewById(R.id.etDuration);
 		stop.setOnClickListener(this);
 		set.setOnClickListener(this);
 	}
@@ -59,6 +60,7 @@ public class MainActivity extends Activity implements OnClickListener
 		sService.putExtra("keyHour", s);
 		sService.putExtra("keyMinute", s);
 		sService.putExtra("keyNumber", s);
+		sService.putExtra("keyDuration", s);
 		//Start the service
 		startService(sService);
 	  }
@@ -123,12 +125,13 @@ public class MainActivity extends Activity implements OnClickListener
 					sService.putExtra("keyHour", timePicker.getCurrentHour().toString());
 					sService.putExtra("keyMinute", timePicker.getCurrentMinute().toString());
 					sService.putExtra("keyNumber", number.getText().toString());
+					sService.putExtra("keyDuration", duration.getText().toString());
 					//Start the service
 					startService(sService);
 				}
 				catch(NumberFormatException e)
 				{
-					Toast.makeText(this, "Fill- How many alarms you want to set", Toast.LENGTH_LONG).show();
+					Toast.makeText(this, "Field is Empty", Toast.LENGTH_LONG).show();
 				}
 				
 				break;
