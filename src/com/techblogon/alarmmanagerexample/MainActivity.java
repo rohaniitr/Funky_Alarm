@@ -133,17 +133,9 @@ public class MainActivity extends Activity implements OnClickListener
 				
 				break;
 			case R.id.bStop:
-//				if (isMyServiceRunning(AlarmService_r.class))
-				if(toStop.isItRunning)
-				{
-					stopService(new Intent(getBaseContext(),AlarmService_r.class));
-					if(mBounded)
-						unbindService(mConnection);
-				}
-				else
-				{
-					Toast.makeText(this, "Alarm not set",  Toast.LENGTH_SHORT).show();
-				}
+				Toast.makeText(this, "Alarm Cancelled", Toast.LENGTH_SHORT).show();
+				toStop.stop();
+				stopService(new Intent(getBaseContext(),AlarmService_r.class));
 				
 				break;
 		}

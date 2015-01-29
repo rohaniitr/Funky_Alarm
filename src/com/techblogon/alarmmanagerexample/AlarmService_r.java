@@ -23,9 +23,7 @@ import android.widget.Toast;
 
 public class AlarmService_r extends Service 
 {
-	MediaPlayer player;
-	Vibrator vibrator;
-	int sHour, sMinute, sNumber;
+	int hour, minute, number;
 	//For the number of Alarms
 	int rohan;
 	PowerManager.WakeLock wakeLock;
@@ -62,8 +60,6 @@ public class AlarmService_r extends Service
 	public void onCreate() 
 	{
 		super.onCreate();
-		player = MediaPlayer.create(this, R.raw.silent);
-		
 		RegisterAlarmBroadcast();
 }
 
@@ -73,11 +69,11 @@ public class AlarmService_r extends Service
 		rohan=0;
 		
 		String s = intent.getStringExtra("keyHour");
-		sHour = Integer.parseInt(s);
+		hour = Integer.parseInt(s);
 		s = intent.getStringExtra("keyMinute");
-		sMinute = Integer.parseInt(s);
+		minute = Integer.parseInt(s);
 		s = intent.getStringExtra("keyNumber");
-		sNumber = Integer.parseInt(s);
+		number = Integer.parseInt(s);
 		setAlarm();
 		return START_STICKY;
 	}
@@ -104,7 +100,7 @@ public class AlarmService_r extends Service
 		{
 			UnregisterAlarmBroadcast();
 			isItRunning= false;
-			Toast.makeText(this, "Alarm Cancelled", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "Alarm Cancelled", Toast.LENGTH_SHORT).show();
 		}	
 	}
 	
@@ -120,12 +116,11 @@ public class AlarmService_r extends Service
 		    public void onReceive(Context context, Intent intent)
 		    {	
 		    	rohan+=1;
-				if (rohan>=sNumber)
+				if (rohan>=number)
 				{
 					UnregisterAlarmBroadcast();
-		    		Toast.makeText(context, "Repeat Alarm Cancelled", Toast.LENGTH_SHORT).show();
-				}	
-				
+		    		Toast.makeText(context, "Last Alarm.\nYou better get up this time buddy.", Toast.LENGTH_SHORT).show();
+				}
 				//start activity
 				intentone = new Intent(context.getApplicationContext(), StopAlarm.class);
 				intentone.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -154,82 +149,28 @@ public class AlarmService_r extends Service
 			//Set the alarm at particular time, Hours & Minutes
 	        Calendar calendar = Calendar.getInstance();
 	        calendar.setTimeInMillis(System.currentTimeMillis());
-	        if (sHour==59 && sMinute==59)
+	        if (hour==59 && minute==59)
 	        	crook=true;
 	        else
 	        	crook=false;
-	        sHour-=calendar.get(Calendar.HOUR);
-	        sMinute-=calendar.get(Calendar.MINUTE);
+	        hour-=calendar.get(Calendar.HOUR);
+	        minute-=calendar.get(Calendar.MINUTE);
 	        
-	        if (sHour<0)
-	        	sHour+=12;
-	        if (sHour>=12)
-	        	sHour-=12;
-	        if(sMinute<0)
-	        	sMinute+=60;
+	        if (hour<0)
+	        	hour+=12;
+	        if (hour>=12)
+	        	hour-=12;
+	        if(minute<0)
+	        	minute+=60;
 	        //Set the alarm
-	        track = System.currentTimeMillis() + (sHour*60*60*1000) + (sMinute*60*1000);
-			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (sHour*60*60*1000) + (sMinute*60*1000) , (60*1000)  , pendingIntent);
+	        track = System.currentTimeMillis() + (hour*60*60*1000) + (minute*60*1000);
+			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (hour*60*60*1000) + (minute*60*1000) , (60*1000)  , pendingIntent);
 			isItRunning=true;
 			if (!crook)
-				if (sMinute!=0)
-					Toast.makeText(this, "The alarm is set for " + sHour + " hours and " + sMinute + " minutes from now", Toast.LENGTH_SHORT).show();
+				if (minute!=0)
+					Toast.makeText(this, "The alarm is set for " + hour + " hours and " + minute + " minutes from now", Toast.LENGTH_SHORT).show();
 				else
-					Toast.makeText(this, "The alarm is set for " + sHour + " hours from now", Toast.LENGTH_SHORT).show();
-		}
-		
-		
-		//Plays the Alarm tone on the Alarm Trigger
-		public void playSound(Context context, Uri alert)
-		{
-			player = new MediaPlayer();
-			try
-			{
-				player.setDataSource(context, alert);
-				final AudioManager audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-				if(audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0)
-				{
-					player.setAudioStreamType(AudioManager.STREAM_ALARM);
-					player.prepare();
-					player.start();
-				}
-			}		
-			catch(IOException e)
-			{
-				Log.i("Alarm Receiver", "No audio Bitch Found");
-			}
-			Thread timer = new Thread(){
-				public void run(){
-					try
-					{
-						sleep(60000);					
-					} 
-					catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
-					finally
-					{
-						player.stop();
-					}
-				}
-			};
-			timer.start();
-		}
-		
-		//Gets the Alarm tone
-		private Uri getAlarmUri()
-		{
-			Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-			if (alert==null)
-			{
-				alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-				if (alert==null)
-				{
-					alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-				}
-			}
-			return alert;
+					Toast.makeText(this, "The alarm is set for " + hour + " hours from now", Toast.LENGTH_SHORT).show();
 		}
 	
 }

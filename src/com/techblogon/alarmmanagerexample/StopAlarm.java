@@ -1,7 +1,6 @@
 package com.techblogon.alarmmanagerexample;
 
 import java.io.IOException;
-
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
@@ -22,7 +21,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-
 import com.techblogon.alarmmanagerexample.AlarmService_r.LocalBinder;
 
 public class StopAlarm extends Activity implements OnClickListener
@@ -165,7 +163,7 @@ public class StopAlarm extends Activity implements OnClickListener
 	    bindService(mIntent, mConnection, BIND_AUTO_CREATE);
 	}
 
-	//Bindt Activity to Service
+	//Bind Activity to Service
 	ServiceConnection mConnection = new ServiceConnection() {
 
 		  public void onServiceDisconnected(ComponentName name) 
